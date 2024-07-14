@@ -34,6 +34,7 @@ impl Eval {
                 match op {
                     Operator::Plus => child,
                     Operator::Minus => -child,
+                    Operator::Multiplication => child,
                 }
             }
             Node::BinaryExpr { op, lhs, rhs } => {
@@ -43,6 +44,7 @@ impl Eval {
                 match op {
                     Operator::Plus => lhs_ret + rhs_ret,
                     Operator::Minus => lhs_ret - rhs_ret,
+                    Operator::Multiplication => lhs_ret * rhs_ret,
                 }
             }
         }
@@ -65,5 +67,12 @@ mod tests {
             Interpreter::from_source("1 + ((2 + 3) - (2 + 3))").unwrap() as i32,
             1
         );
+    }
+
+    #[test]
+    fn mult() {
+        assert_eq!(Interpreter::from_source("1 * 3").unwrap() as i32, 3);
+        assert_eq!(Interpreter::from_source("(-1) * 3").unwrap() as i32, -3);
+        assert_eq!(Interpreter::from_source("2 + (2 * 3)").unwrap() as i32, 8);
     }
 }

@@ -77,6 +77,7 @@ fn parse_unary_expr(pair: pest::iterators::Pair<Rule>, child: Node) -> Node {
         op: match pair.as_str() {
             "+" => Operator::Plus,
             "-" => Operator::Minus,
+            "*" => Operator::Multiplication,
             _ => unreachable!(),
         },
         child: Box::new(child),
@@ -88,6 +89,7 @@ fn parse_binary_expr(pair: pest::iterators::Pair<Rule>, lhs: Node, rhs: Node) ->
         op: match pair.as_str() {
             "+" => Operator::Plus,
             "-" => Operator::Minus,
+            "*" => Operator::Multiplication,
             _ => unreachable!(),
         },
         lhs: Box::new(lhs),
@@ -126,7 +128,21 @@ mod tests {
             }]
         );
         assert_eq!(format!("{}", neg_two.unwrap()[0]), "-2");
+
+        let mult_three = parse("*3");
+        assert!(mult_three.is_ok());
+        assert_eq!(
+            mult_three.clone().unwrap(),
+            vec![
+                Node::UnaryExpr {
+                    op: Operator::Multiplication,
+                    child: Box::new(Node::Int(3))
+                }
+            ]
+        );
+        assert_eq!(format!("{}", mult_three.unwrap()[0]), "*3");
     }
+
     #[test]
     fn binary_expr() {
         let sum = parse("1 + 2");
@@ -151,6 +167,18 @@ mod tests {
             }]
         );
         assert_eq!(format!("{}", minus.unwrap()[0]), "1 - 2");
+
+        let mult = parse("2 * 3");
+        assert!(mult.is_ok());
+        assert_eq!(
+            mult.clone().unwrap(),
+            vec![Node::BinaryExpr {
+                op: Operator::Multiplication,
+                lhs: Box::new(Node::Int(2)),
+                rhs: Box::new(Node::Int(3)),
+            }]
+        )
+
         // fails as there's no rhs:
         // let paran_sum = parse("(1 + 2)");
         // assert!(paran_sum.is_ok());
@@ -185,6 +213,23 @@ mod tests {
                     lhs: Box::new(Node::Int(1)),
                     rhs: Box::new(Node::Int(2)),
                 }),
+                rhs: Box::new(Node::Int(3)),
+            }]
+        )
+    }
+    
+    #[test]
+    fn neg_mult() {
+        assert_eq!(
+            parse("(-1) * 3").unwrap(),
+            vec![Node::BinaryExpr {
+                op: Operator::Multiplication,
+                lhs: Box::new(
+                    Node::UnaryExpr {
+                        op: Operator::Minus,
+                        child: Box::new(Node::Int(1)),
+                    }
+                ),
                 rhs: Box::new(Node::Int(3)),
             }]
         )
