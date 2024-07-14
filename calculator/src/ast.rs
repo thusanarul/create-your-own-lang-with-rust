@@ -6,6 +6,7 @@ pub enum Operator {
     Plus,
     Minus,
     Multiplication,
+    Division,
 }
 // ANCHOR_END: operator
 
@@ -14,7 +15,8 @@ impl fmt::Display for Operator {
         match &self {
             Operator::Plus => write!(f, "+"),
             Operator::Minus => write!(f, "-"),
-            Operator::Multiplication => write!(f, "*")
+            Operator::Multiplication => write!(f, "*"),
+            Operator::Division => write!(f, "/"),
         }
     }
 }

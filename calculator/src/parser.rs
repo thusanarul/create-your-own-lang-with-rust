@@ -78,6 +78,7 @@ fn parse_unary_expr(pair: pest::iterators::Pair<Rule>, child: Node) -> Node {
             "+" => Operator::Plus,
             "-" => Operator::Minus,
             "*" => Operator::Multiplication,
+            "/" => Operator::Division,
             _ => unreachable!(),
         },
         child: Box::new(child),
@@ -90,6 +91,7 @@ fn parse_binary_expr(pair: pest::iterators::Pair<Rule>, lhs: Node, rhs: Node) ->
             "+" => Operator::Plus,
             "-" => Operator::Minus,
             "*" => Operator::Multiplication,
+            "/" => Operator::Division,
             _ => unreachable!(),
         },
         lhs: Box::new(lhs),
@@ -177,7 +179,18 @@ mod tests {
                 lhs: Box::new(Node::Int(2)),
                 rhs: Box::new(Node::Int(3)),
             }]
-        )
+        );
+
+        let div = parse("3 / 1");
+        assert!(div.is_ok());
+        assert_eq!(
+            div.clone().unwrap(),
+            vec![Node::BinaryExpr {
+                op: Operator::Division,
+                lhs: Box::new(Node::Int(3)),
+                rhs: Box::new(Node::Int(1)),
+            }]
+        );
 
         // fails as there's no rhs:
         // let paran_sum = parse("(1 + 2)");

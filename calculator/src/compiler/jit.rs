@@ -67,8 +67,7 @@ impl<'a> RecursiveBuilder<'a> {
                 let child = self.build(child);
                 match op {
                     Operator::Minus => child.const_neg(),
-                    Operator::Plus => child,
-                    Operator::Multiplication => child,
+                    _ => child,
                 }
             }
             Node::BinaryExpr { op, lhs, rhs } => {
@@ -84,7 +83,14 @@ impl<'a> RecursiveBuilder<'a> {
                         .builder
                         .build_int_sub(left, right, "minus_temp")
                         .unwrap(),
-                    Operator::Multiplication => self.builder.build_int_mul(left, right, "mult_temp").unwrap()
+                    Operator::Multiplication => self
+                        .builder
+                        .build_int_mul(left, right, "mult_temp")
+                        .unwrap(),
+                    Operator::Division => self
+                        .builder
+                        .build_int_signed_div(left, right, "div_temp")
+                        .unwrap()
                 }
             }
         }
@@ -108,7 +114,8 @@ mod tests {
     }
 
     #[test]
-    fn mult() {
-        assert_eq!(Jit::from_source("1 * 3").unwrap(), 3)
+    fn mult_div() {
+        assert_eq!(Jit::from_source("1 * 3").unwrap(), 3);
+        assert_eq!(Jit::from_source("3 / 1").unwrap(), 3)
     }
 }

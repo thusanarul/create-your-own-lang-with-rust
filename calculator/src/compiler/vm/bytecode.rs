@@ -71,7 +71,8 @@ impl Interpreter {
                 match op {
                     Operator::Plus => self.add_instruction(OpCode::OpPlus),
                     Operator::Minus => self.add_instruction(OpCode::OpMinus),
-                    Operator::Multiplication => todo!()
+                    Operator::Multiplication => todo!(),
+                    Operator::Division => todo!()
 
                 };
             }
@@ -81,7 +82,8 @@ impl Interpreter {
                 match op {
                     Operator::Plus => self.add_instruction(OpCode::OpAdd),
                     Operator::Minus => self.add_instruction(OpCode::OpSub),
-                    Operator::Multiplication => todo!()
+                    Operator::Multiplication => todo!(),
+                    Operator::Division => todo!()
                 };
             }
         };

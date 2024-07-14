@@ -32,9 +32,8 @@ impl Eval {
             Node::UnaryExpr { op, child } => {
                 let child = self.eval(child);
                 match op {
-                    Operator::Plus => child,
                     Operator::Minus => -child,
-                    Operator::Multiplication => child,
+                    _ => child,
                 }
             }
             Node::BinaryExpr { op, lhs, rhs } => {
@@ -45,6 +44,7 @@ impl Eval {
                     Operator::Plus => lhs_ret + rhs_ret,
                     Operator::Minus => lhs_ret - rhs_ret,
                     Operator::Multiplication => lhs_ret * rhs_ret,
+                    Operator::Division => lhs_ret / rhs_ret,
                 }
             }
         }
@@ -74,5 +74,11 @@ mod tests {
         assert_eq!(Interpreter::from_source("1 * 3").unwrap() as i32, 3);
         assert_eq!(Interpreter::from_source("(-1) * 3").unwrap() as i32, -3);
         assert_eq!(Interpreter::from_source("2 + (2 * 3)").unwrap() as i32, 8);
+    }
+
+    #[test]
+    fn division() {
+        assert_eq!(Interpreter::from_source("3 / 3").unwrap() as i32, 1);
+        assert_eq!(Interpreter::from_source("2 + (3 / 1)").unwrap() as i32, 5);
     }
 }
